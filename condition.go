@@ -14,52 +14,62 @@ type Identifiable interface {
 }
 
 type Conditional interface {
-	Condition() (goqu.Expression, error)
+	Condition(inUpdate bool) (goqu.Expression, error)
 	getJoiners() []*joiner
+	//getOp() string
+	//getValue() interface{}
 }
 
 type Condition struct {
-	Field   Identifiable
+	Field   fieldI
 	Op      string
 	Value   interface{}
 	joiners []*joiner
 }
 
-func (c Condition) Condition() (exp.Expression, error) {
+func (c Condition) Condition(inUpdate bool) (exp.Expression, error) {
+	var ident exp.IdentifierExpression
+	ident = c.Field.getIdent()
+	if inUpdate {
+		model := c.Field.getModel()
+		if model.joiner != nil {
+			ident = goqu.I(fmt.Sprintf("%s.%s", model.joiner.ParentTable, model.joiner.From))
+		}
+	}
 	var condition exp.Expression
 	switch c.Op {
 	case opIn:
-		condition = c.Field.In(c.Value)
+		condition = ident.In(c.Value)
 	case opNotIn:
-		condition = c.Field.NotIn(c.Value)
+		condition = ident.NotIn(c.Value)
 	case opEq:
-		condition = c.Field.Eq(c.Value)
+		condition = ident.Eq(c.Value)
 	case opNotEq:
-		condition = c.Field.Neq(c.Value)
+		condition = ident.Neq(c.Value)
 	case opLike:
-		condition = c.Field.Like(c.Value)
+		condition = ident.Like(c.Value)
 	case opNotLike:
-		condition = c.Field.NotLike(c.Value)
+		condition = ident.NotLike(c.Value)
 	case opRegex:
-		condition = c.Field.RegexpLike(c.Value)
+		condition = ident.RegexpLike(c.Value)
 	case opRegexI:
-		condition = c.Field.RegexpILike(c.Value)
+		condition = ident.RegexpILike(c.Value)
 	case opNotRegex:
-		condition = c.Field.RegexpNotLike(c.Value)
+		condition = ident.RegexpNotLike(c.Value)
 	case opNotRegexI:
-		condition = c.Field.RegexpNotILike(c.Value)
+		condition = ident.RegexpNotILike(c.Value)
 	case opLt:
-		condition = c.Field.Lt(c.Value)
+		condition = ident.Lt(c.Value)
 	case opLte:
-		condition = c.Field.Lte(c.Value)
+		condition = ident.Lte(c.Value)
 	case opGt:
-		condition = c.Field.Gt(c.Value)
+		condition = ident.Gt(c.Value)
 	case opGte:
-		condition = c.Field.Gte(c.Value)
+		condition = ident.Gte(c.Value)
 	case opIsNotNull:
-		condition = c.Field.IsNotNull()
+		condition = ident.IsNotNull()
 	case opIsNull:
-		condition = c.Field.IsNull()
+		condition = ident.IsNull()
 	default:
 		return condition, fmt.Errorf("operator %s can not be found", c.Op)
 	}
@@ -78,10 +88,10 @@ func Or(conditions ...Condition) OrCondition {
 	return OrCondition{conditions}
 }
 
-func (oe OrCondition) Condition() (exp.Expression, error) {
+func (oe OrCondition) Condition(inUpdate bool) (exp.Expression, error) {
 	var exps []exp.Expression
 	for _, cond := range oe.Conditions {
-		expr, err := cond.Condition()
+		expr, err := cond.Condition(inUpdate)
 		if err != nil {
 			return nil, err
 		}

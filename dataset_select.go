@@ -18,7 +18,7 @@ type SelectDataset struct {
 func (sd *SelectDataset) Where(conditions ...Conditional) *SelectDataset {
 	var exps []exp.Expression
 	for _, condition := range conditions {
-		cond, err := condition.Condition()
+		cond, err := condition.Condition(false)
 		joiners := condition.getJoiners()
 		for _, joiner := range joiners {
 			if joiner == nil {

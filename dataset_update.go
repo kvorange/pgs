@@ -9,7 +9,7 @@ import (
 
 type UpdateDataset struct {
 	model   *Model
-	dataset *goqu.DeleteDataset
+	dataset *goqu.UpdateDataset
 	err     error
 	tx      pgx.Tx
 }
@@ -17,7 +17,7 @@ type UpdateDataset struct {
 func (d *UpdateDataset) Where(conditions ...Conditional) *UpdateDataset {
 	var exps []exp.Expression
 	for _, condition := range conditions {
-		cond, err := condition.Condition()
+		cond, err := condition.Condition(true)
 		d.err = err
 		exps = append(exps, cond)
 	}

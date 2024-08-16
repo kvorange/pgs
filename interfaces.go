@@ -12,6 +12,9 @@ type fieldI interface {
 
 	init(model *Model, field string)
 	getSelector() exp.AliasedExpression
+	getField() string
+	getModel() *Model
+
 	Selectable
 	Ordered
 }

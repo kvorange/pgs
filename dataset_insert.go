@@ -2,27 +2,15 @@ package pgs
 
 import (
 	"github.com/doug-martin/goqu/v9"
-	"github.com/doug-martin/goqu/v9/exp"
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/jackc/pgx/v5"
 )
 
 type InsertDataset struct {
 	model   *Model
-	dataset *goqu.DeleteDataset
+	dataset *goqu.InsertDataset
 	err     error
 	tx      pgx.Tx
-}
-
-func (d *InsertDataset) Where(conditions ...Conditional) *InsertDataset {
-	var exps []exp.Expression
-	for _, condition := range conditions {
-		cond, err := condition.Condition()
-		d.err = err
-		exps = append(exps, cond)
-	}
-	d.dataset = d.dataset.Where(exps...)
-	return d
 }
 
 func (d *InsertDataset) Exec() error {

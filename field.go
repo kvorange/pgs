@@ -15,6 +15,14 @@ type Field[T any] struct {
 	model *Model
 }
 
+func (f *Field[T]) getField() string {
+	return f.field
+}
+
+func (f *Field[T]) getModel() *Model {
+	return f.model
+}
+
 func (f *Field[T]) getSelector() exp.AliasedExpression {
 	var selector exp.IdentifierExpression
 	if f.model.prefix == "" {
@@ -98,14 +106,14 @@ func (f *Field[T]) In(value interface{}) Condition {
 	if ok {
 		// goqu use Eq for op IN for nested select
 		return Condition{
-			Field:   f.getIdent(),
+			Field:   f,
 			Op:      opEq,
 			Value:   ds.dataset,
 			joiners: []*joiner{f.getJoiner()},
 		}
 	}
 	return Condition{
-		Field:   f.getIdent(),
+		Field:   f,
 		Op:      opIn,
 		Value:   value,
 		joiners: []*joiner{f.getJoiner()},
@@ -117,14 +125,14 @@ func (f *Field[T]) NotIn(value interface{}) Condition {
 	if ok {
 		// goqu use notEq for op IN for nested select
 		return Condition{
-			Field:   f.getIdent(),
+			Field:   f,
 			Op:      opNotEq,
 			Value:   ds.dataset,
 			joiners: []*joiner{f.getJoiner()},
 		}
 	}
 	return Condition{
-		Field:   f.getIdent(),
+		Field:   f,
 		Op:      opNotIn,
 		Value:   value,
 		joiners: []*joiner{f.getJoiner()},
@@ -137,7 +145,7 @@ func (f *Field[T]) Eq(value interface{}) Condition {
 		value = ds.dataset
 	}
 	return Condition{
-		Field:   f.getIdent(),
+		Field:   f,
 		Op:      opEq,
 		Value:   value,
 		joiners: []*joiner{f.getJoiner()},
@@ -150,7 +158,7 @@ func (f *Field[T]) NotEq(value interface{}) Condition {
 		value = ds.dataset
 	}
 	return Condition{
-		Field:   f.getIdent(),
+		Field:   f,
 		Op:      opNotEq,
 		Value:   value,
 		joiners: []*joiner{f.getJoiner()},
@@ -163,7 +171,7 @@ func (f *Field[T]) Like(value interface{}) Condition {
 		value = ds.dataset
 	}
 	return Condition{
-		Field:   f.getIdent(),
+		Field:   f,
 		Op:      opLike,
 		Value:   value,
 		joiners: []*joiner{f.getJoiner()},
@@ -176,7 +184,7 @@ func (f *Field[T]) NotLike(value interface{}) Condition {
 		value = ds.dataset
 	}
 	return Condition{
-		Field:   f.getIdent(),
+		Field:   f,
 		Op:      opNotLike,
 		Value:   value,
 		joiners: []*joiner{f.getJoiner()},
@@ -189,7 +197,7 @@ func (f *Field[T]) Regex(value interface{}) Condition {
 		value = ds.dataset
 	}
 	return Condition{
-		Field:   f.getIdent(),
+		Field:   f,
 		Op:      opRegex,
 		Value:   value,
 		joiners: []*joiner{f.getJoiner()},
@@ -202,7 +210,7 @@ func (f *Field[T]) NotRegex(value interface{}) Condition {
 		value = ds.dataset
 	}
 	return Condition{
-		Field:   f.getIdent(),
+		Field:   f,
 		Op:      opNotRegex,
 		Value:   value,
 		joiners: []*joiner{f.getJoiner()},
@@ -215,7 +223,7 @@ func (f *Field[T]) NotRegexI(value interface{}) Condition {
 		value = ds.dataset
 	}
 	return Condition{
-		Field:   f.getIdent(),
+		Field:   f,
 		Op:      opNotRegexI,
 		Value:   value,
 		joiners: []*joiner{f.getJoiner()},
@@ -228,7 +236,7 @@ func (f *Field[T]) Lt(value interface{}) Condition {
 		value = ds.dataset
 	}
 	return Condition{
-		Field:   f.getIdent(),
+		Field:   f,
 		Op:      opLt,
 		Value:   value,
 		joiners: []*joiner{f.getJoiner()},
@@ -241,7 +249,7 @@ func (f *Field[T]) Lte(value interface{}) Condition {
 		value = ds.dataset
 	}
 	return Condition{
-		Field:   f.getIdent(),
+		Field:   f,
 		Op:      opLte,
 		Value:   value,
 		joiners: []*joiner{f.getJoiner()},
@@ -254,7 +262,7 @@ func (f *Field[T]) Gt(value interface{}) Condition {
 		value = ds.dataset
 	}
 	return Condition{
-		Field:   f.getIdent(),
+		Field:   f,
 		Op:      opGt,
 		Value:   value,
 		joiners: []*joiner{f.getJoiner()},
@@ -267,7 +275,7 @@ func (f *Field[T]) Gte(value interface{}) Condition {
 		value = ds.dataset
 	}
 	return Condition{
-		Field:   f.getIdent(),
+		Field:   f,
 		Op:      opGte,
 		Value:   value,
 		joiners: []*joiner{f.getJoiner()},
@@ -276,7 +284,7 @@ func (f *Field[T]) Gte(value interface{}) Condition {
 
 func (f *Field[T]) IsNotNull() Condition {
 	return Condition{
-		Field: f.getIdent(),
+		Field: f,
 		Op:    opIsNotNull,
 		Value: nil,
 	}
@@ -284,7 +292,7 @@ func (f *Field[T]) IsNotNull() Condition {
 
 func (f *Field[T]) IsNull() Condition {
 	return Condition{
-		Field: f.getIdent(),
+		Field: f,
 		Op:    opIsNull,
 		Value: nil,
 	}

@@ -11,11 +11,12 @@ import (
 const separator = "__"
 
 type joiner struct {
-	Name  string
-	From  string
-	To    string
-	Table exp.AliasedExpression
-	On    exp.JoinCondition
+	ParentTable string
+	Name        string
+	From        string
+	To          string
+	Table       exp.AliasedExpression
+	On          exp.JoinCondition
 }
 
 type Model struct {
@@ -119,6 +120,7 @@ func (m *Model) Init(db *DbClient, model interface{}) error {
 			joiner.From = fkValues[0]
 			joiner.To = fkValues[1]
 			joiner.Name = tableAsName
+			joiner.ParentTable = m.tableName
 			joiner.Table = goqu.T(nestedModel.tableName).As(tableAsName)
 			joiner.On = goqu.On(
 				goqu.Ex{
@@ -178,6 +180,29 @@ func (m *Model) Select(fields ...Selectable) *SelectDataset {
 func (m *Model) Delete() *DeleteDataset {
 	dataset := goqu.Delete(m.tableName)
 	return &DeleteDataset{
+		model:   m,
+		dataset: dataset,
+		tx:      nil,
+	}
+}
+
+func (m *Model) Update(record Record) *UpdateDataset {
+	values := record.toMap()
+	dataset := goqu.Update(m.tableName).Set(values)
+	return &UpdateDataset{
+		model:   m,
+		dataset: dataset,
+		tx:      nil,
+	}
+}
+
+func (m *Model) Insert(records ...Record) *InsertDataset {
+	var rows []map[string]interface{}
+	for _, record := range records {
+		rows = append(rows, record.toMap())
+	}
+	dataset := goqu.Insert(m.tableName).Rows(rows)
+	return &InsertDataset{
 		model:   m,
 		dataset: dataset,
 		tx:      nil,

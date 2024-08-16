@@ -17,7 +17,7 @@ type DeleteDataset struct {
 func (d *DeleteDataset) Where(conditions ...Conditional) *DeleteDataset {
 	var exps []exp.Expression
 	for _, condition := range conditions {
-		cond, err := condition.Condition()
+		cond, err := condition.Condition(true)
 		d.err = err
 		exps = append(exps, cond)
 	}
