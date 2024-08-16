@@ -8,9 +8,6 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type Scanneble interface {
-	Scan(src any) error
-}
 type Field[T any] struct {
 	Value T
 	field string
@@ -83,8 +80,8 @@ func (f *Field[T]) As(as string) *Field[T] {
 }
 
 func (f *Field[T]) Scan(src interface{}) error {
-	v := interface{}(f.Value)
-	if pgValue, ok := v.(pgtype.Int2); ok {
+	v := interface{}(&f.Value)
+	if pgValue, ok := v.(pgtype.Int4); ok {
 		return pgValue.Scan(src)
 	}
 	if pgValue, ok := v.(pgtype.Int4); ok {
