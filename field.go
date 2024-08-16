@@ -67,7 +67,7 @@ func (f *Field[T]) init(model *Model, field string) {
 	f.field = field
 }
 
-func (f *Field[T]) MarshalJSON() ([]byte, error) {
+func (f Field[T]) MarshalJSON() ([]byte, error) {
 	// Сериализуем значение поля
 	data, err := json.Marshal(f.Value)
 	if err != nil {
