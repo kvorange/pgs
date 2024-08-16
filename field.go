@@ -5,9 +5,12 @@ import (
 	"fmt"
 	"github.com/doug-martin/goqu/v9"
 	"github.com/doug-martin/goqu/v9/exp"
-	"reflect"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Scanneble interface {
+	Scan(src any) error
+}
 type Field[T any] struct {
 	Value T
 	field string
@@ -80,25 +83,77 @@ func (f *Field[T]) As(as string) *Field[T] {
 }
 
 func (f *Field[T]) Scan(src interface{}) error {
-	v := reflect.ValueOf(&f.Value)
-	if v.Kind() != reflect.Ptr {
-		return fmt.Errorf("value is not a pointer")
+	v := interface{}(f.Value)
+	if pgValue, ok := v.(pgtype.Int2); ok {
+		return pgValue.Scan(src)
 	}
-
-	// Проверяем, что у типа, на который указывает v, есть метод Scan
-	elem := v.Elem()
-	if !elem.CanAddr() {
-		return fmt.Errorf("cannot address element")
+	if pgValue, ok := v.(pgtype.Int4); ok {
+		return pgValue.Scan(src)
 	}
-
-	scanMethod := elem.Addr().MethodByName("Scan")
-	if !scanMethod.IsValid() {
-		return fmt.Errorf("type does not have a Scan method")
+	if pgValue, ok := v.(pgtype.Int8); ok {
+		return pgValue.Scan(src)
 	}
-
-	// Вызываем метод Scan с аргументом src
-	scanMethod.Call([]reflect.Value{reflect.ValueOf(src)})
-	return nil
+	if pgValue, ok := v.(pgtype.Float4); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.Float8); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.Text); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.Time); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.Timestamp); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.Timestamptz); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.Point); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.Polygon); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.Bool); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.Bits); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.Box); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.Circle); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.Date); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.Interval); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.Numeric); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.Line); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.Hstore); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.Lseg); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.Uint32); ok {
+		return pgValue.Scan(src)
+	}
+	if pgValue, ok := v.(pgtype.UUID); ok {
+		return pgValue.Scan(src)
+	}
+	return fmt.Errorf("unsupported type: %T", v)
 }
 
 func (f *Field[T]) In(value interface{}) Condition {
