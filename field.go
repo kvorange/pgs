@@ -81,73 +81,73 @@ func (f *Field[T]) As(as string) *Field[T] {
 
 func (f *Field[T]) Scan(src interface{}) error {
 	v := interface{}(&f.Value)
-	if pgValue, ok := v.(pgtype.Int4); ok {
+	if pgValue, ok := v.(*pgtype.Int2); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Int4); ok {
+	if pgValue, ok := v.(*pgtype.Int4); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Int8); ok {
+	if pgValue, ok := v.(*pgtype.Int8); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Float4); ok {
+	if pgValue, ok := v.(*pgtype.Float4); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Float8); ok {
+	if pgValue, ok := v.(*pgtype.Float8); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Text); ok {
+	if pgValue, ok := v.(*pgtype.Text); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Time); ok {
+	if pgValue, ok := v.(*pgtype.Time); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Timestamp); ok {
+	if pgValue, ok := v.(*pgtype.Timestamp); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Timestamptz); ok {
+	if pgValue, ok := v.(*pgtype.Timestamptz); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Point); ok {
+	if pgValue, ok := v.(*pgtype.Point); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Polygon); ok {
+	if pgValue, ok := v.(*pgtype.Polygon); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Bool); ok {
+	if pgValue, ok := v.(*pgtype.Bool); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Bits); ok {
+	if pgValue, ok := v.(*pgtype.Bits); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Box); ok {
+	if pgValue, ok := v.(*pgtype.Box); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Circle); ok {
+	if pgValue, ok := v.(*pgtype.Circle); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Date); ok {
+	if pgValue, ok := v.(*pgtype.Date); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Interval); ok {
+	if pgValue, ok := v.(*pgtype.Interval); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Numeric); ok {
+	if pgValue, ok := v.(*pgtype.Numeric); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Line); ok {
+	if pgValue, ok := v.(*pgtype.Line); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Hstore); ok {
+	if pgValue, ok := v.(*pgtype.Hstore); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Lseg); ok {
+	if pgValue, ok := v.(*pgtype.Lseg); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.Uint32); ok {
+	if pgValue, ok := v.(*pgtype.Uint32); ok {
 		return pgValue.Scan(src)
 	}
-	if pgValue, ok := v.(pgtype.UUID); ok {
+	if pgValue, ok := v.(*pgtype.UUID); ok {
 		return pgValue.Scan(src)
 	}
 	return fmt.Errorf("unsupported type: %T", v)
