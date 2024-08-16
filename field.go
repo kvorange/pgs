@@ -65,13 +65,24 @@ func (f *Field[T]) init(model *Model, field string) {
 }
 
 func (f Field[T]) MarshalJSON() ([]byte, error) {
-	// Сериализуем значение поля
-	data, err := json.Marshal(f.Value)
-	if err != nil {
-		return nil, err
+	v := interface{}(&f.Value)
+
+	// rewrite pgtype Float Marshal
+	if floatValue, ok := v.(*pgtype.Float8); ok {
+		if !floatValue.Valid {
+			return json.Marshal(nil)
+		}
+		return json.Marshal(floatValue.Float64)
 	}
 
-	return data, nil
+	if floatValue, ok := v.(*pgtype.Float4); ok {
+		if !floatValue.Valid {
+			return json.Marshal(nil)
+		}
+		return json.Marshal(floatValue.Float32)
+	}
+
+	return json.Marshal(f.Value)
 }
 
 func (f *Field[T]) As(as string) *Field[T] {
