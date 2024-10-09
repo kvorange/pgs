@@ -267,6 +267,19 @@ func (f *Field[T]) Regex(value interface{}) Condition {
 	}
 }
 
+func (f *Field[T]) RegexI(value interface{}) Condition {
+	ds, ok := value.(*SelectDataset)
+	if ok {
+		value = ds.dataset
+	}
+	return Condition{
+		Field:   f,
+		Op:      opRegexI,
+		Value:   value,
+		joiners: []*joiner{f.getJoiner()},
+	}
+}
+
 func (f *Field[T]) NotRegex(value interface{}) Condition {
 	ds, ok := value.(*SelectDataset)
 	if ok {
