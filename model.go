@@ -115,7 +115,13 @@ func (m *Model) Init(db *DbClient, model interface{}) error {
 			} else {
 				tableAsName = fmt.Sprintf("%s%s%s", m.asName, separator, nestedModel.asName)
 			}
-
+			if m.parent != nil {
+				asName := m.parent.tableName
+				if m.parent.asName != "" {
+					asName = m.parent.asName
+				}
+				modelAs = fmt.Sprintf("%s%s%s", asName, separator, m.asName)
+			}
 			var joiner joiner
 			joiner.From = fkValues[0]
 			joiner.To = fkValues[1]
