@@ -22,9 +22,8 @@ func (c CountExpression) getSelectors() []interface{} {
 	return []interface{}{goqu.COUNT(ident)}
 }
 
-func (c CountExpression) getJoiner() *joiner {
-	joiner := c.field.getJoiner()
-	return joiner
+func (c CountExpression) getJoiners() []*joiner {
+	return c.field.getJoiners()
 }
 
 func (c CountExpression) As(as string) CountExpression {
@@ -44,7 +43,7 @@ func L(sql string, values ...interface{}) LiteralExpression {
 	for _, value := range values {
 		field, ok := value.(fieldI)
 		if ok {
-			j = append(j, field.getJoiner())
+			j = append(j, field.getJoiners()...)
 			args = append(args, field.getIdent())
 		} else {
 			args = append(args, value)

@@ -165,12 +165,14 @@ func (m *Model) Select(fields ...Selectable) *SelectDataset {
 	}
 	for _, field := range fields {
 		selectFields = append(selectFields, field.getSelectors()...)
-		joiner := field.getJoiner()
-		if joiner != nil {
-			_, ok := joinedTables[joiner.Name]
-			if !ok {
-				dataset = dataset.LeftJoin(joiner.Table, joiner.On)
-				joinedTables[joiner.Name] = true
+		joiners := field.getJoiners()
+		for _, joiner := range joiners {
+			if joiner != nil {
+				_, ok := joinedTables[joiner.Name]
+				if !ok {
+					dataset = dataset.LeftJoin(joiner.Table, joiner.On)
+					joinedTables[joiner.Name] = true
+				}
 			}
 		}
 	}
@@ -240,6 +242,13 @@ func (m *Model) allJoiners() []*joiner {
 	return joiners
 }
 
-func (m *Model) getJoiner() *joiner {
-	return m.joiner
+func (m *Model) getJoiners() []*joiner {
+	var joiners []*joiner
+	if m.parent != nil {
+		if m.joiner != nil {
+			joiners = append(joiners, m.parent.getJoiners()...)
+		}
+	}
+	joiners = append(joiners, m.joiner)
+	return joiners
 }

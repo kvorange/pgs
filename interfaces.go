@@ -21,7 +21,7 @@ type fieldI interface {
 
 type Selectable interface {
 	getSelectors() []interface{}
-	getJoiner() *joiner
+	getJoiners() []*joiner
 }
 
 type Ordered interface {
